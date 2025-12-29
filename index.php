@@ -1,74 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> FISC-School Management System</title>
+    <title>FISC-School Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4f46e5; /* Indigo 600 */
+            --primary-dark: #4338ca; /* Indigo 700 */
+            --secondary: #8b5cf6; /* Violet 500 */
+            --accent: #f59e0b; /* Amber 500 */
+            --text: #1f2937; /* Gray 800 */
+            --text-light: #6b7280; /* Gray 500 */
+            --white: #ffffff;
+            --gray-light: #f9fafb;
+            --glass: rgba(255, 255, 255, 0.9);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 1rem;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #f0f9ff;
-            --accent: #f59e0b;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --white: #ffffff;
-            --gray: #f8fafc;
-            --border: #e5e7eb;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
             line-height: 1.6;
             color: var(--text);
-            background-color: var(--white);
+            background-color: var(--gray-light);
+            overflow-x: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
         }
 
         /* Header & Navigation */
         header {
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
+            padding: 1.25rem 0;
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
             display: flex;
             align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
         }
 
         .logo i {
-            margin-right: 10px;
+            font-size: 1.75rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 2rem;
+            align-items: center;
         }
 
         .nav-links a {
@@ -76,6 +90,7 @@
             color: var(--text);
             font-weight: 500;
             transition: color 0.3s;
+            font-size: 0.95rem;
         }
 
         .nav-links a:hover {
@@ -84,22 +99,24 @@
 
         .auth-buttons {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
         }
 
         .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
         }
 
         .btn-outline {
-            border: 1px solid var(--primary);
+            border: 2px solid var(--primary);
             color: var(--primary);
             background: transparent;
         }
@@ -107,244 +124,297 @@
         .btn-outline:hover {
             background: var(--primary);
             color: var(--white);
+            transform: translateY(-2px);
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: var(--white);
-            border: 1px solid var(--primary);
+            border: none;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(79, 70, 229, 0.3);
         }
 
-        .btn-accent {
-            background: var(--accent);
-            color: var(--white);
-            border: 1px solid var(--accent);
-        }
-
-        .btn-accent:hover {
-            background: #e69008;
-        }
-
-        .mobile-menu {
+        .mobile-menu-btn {
             display: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--primary);
-            transition: transform 0.3s;
+            color: var(--text);
+            background: none;
+            border: none;
         }
 
         /* Hero Section */
         .hero {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e1f5fe 100%);
+            padding: 6rem 0;
             position: relative;
             overflow: hidden;
+            background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.1), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.1), transparent 40%);
         }
 
         .hero-content {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
             align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-        }
-
-        .hero-text {
-            flex: 1;
         }
 
         .hero-text h1 {
-            font-size: 3rem;
-            line-height: 1.2;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
             color: var(--text);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-text p {
-            font-size: 1.2rem;
+            font-size: 1.125rem;
             color: var(--text-light);
-            margin-bottom: 30px;
+            margin-bottom: 2.5rem;
+            max-width: 540px;
         }
 
         .hero-buttons {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
         }
 
         .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
+            position: relative;
         }
 
         .hero-image img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s ease;
         }
 
-        /* Categories Section */
-        .categories {
-            padding: 80px 0;
+        .hero-image:hover img {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
             background-color: var(--white);
         }
 
-        .section-title {
+        .section-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 4rem;
         }
 
-        .section-title h2 {
+        .section-header h2 {
             font-size: 2.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
+            color: var(--text);
         }
 
-        .section-title p {
+        .section-header p {
             color: var(--text-light);
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .category-grid {
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
         }
 
-        .category-card {
+        .feature-card {
             background: var(--white);
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
-            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
-        .category-card:hover {
+        .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
         }
 
-        .category-icon {
-            width: 70px;
-            height: 70px;
-            background: var(--secondary);
-            border-radius: 50%;
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(79, 70, 229, 0.1);
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
             color: var(--primary);
-            font-size: 1.8rem;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
-        .category-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
         }
 
-        .category-card p {
+        .feature-card p {
             color: var(--text-light);
+            font-size: 0.95rem;
         }
 
-        /* Testimonials Section */
+        /* Payment Plans Section */
+        .pricing {
+            padding: 6rem 0;
+            background-color: var(--gray-light);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card.popular {
+            border: 2px solid var(--primary);
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .popular-badge {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 1rem;
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-bottom-left-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2rem;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .plan-features li i {
+            color: var(--primary);
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+        }
+
+        /* Testimonials */
         .testimonials {
-            padding: 80px 0;
-            background-color: var(--gray);
+            padding: 6rem 0;
+            background-color: var(--white);
         }
 
         .testimonial-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            gap: 2rem;
         }
 
         .testimonial-card {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: var(--gray-light);
+            padding: 2rem;
+            border-radius: var(--radius);
             position: relative;
         }
 
-        .testimonial-card:before {
-            content: "";
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-size: 4rem;
-            color: var(--primary);
-            opacity: 0.2;
-            font-family: Georgia, serif;
-        }
-
         .testimonial-text {
-            margin-bottom: 20px;
             font-style: italic;
+            margin-bottom: 1.5rem;
             color: var(--text);
         }
 
         .testimonial-author {
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
 
         .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
             background: var(--primary);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-weight: bold;
-            margin-right: 15px;
-        }
-
-        .author-info h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .author-info p {
-            color: var(--text-light);
-            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         /* Footer */
         footer {
-            background: var(--text);
-            color: var(--white);
-            padding: 60px 0 20px;
+            background-color: #111827;
+            color: #9ca3af;
+            padding: 4rem 0 2rem;
         }
 
-        .footer-content {
+        .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+            gap: 3rem;
+            margin-bottom: 3rem;
         }
 
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-column h3:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 2px;
-            background: var(--primary);
+        .footer-col h3 {
+            color: var(--white);
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
         }
 
         .footer-links {
@@ -352,11 +422,11 @@
         }
 
         .footer-links li {
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
         }
 
         .footer-links a {
-            color: #d1d5db;
+            color: #9ca3af;
             text-decoration: none;
             transition: color 0.3s;
         }
@@ -367,86 +437,100 @@
 
         .social-links {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
         .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: var(--white);
-            transition: background 0.3s;
-        }
-
-        .social-links a:hover {
-            background: var(--primary);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: #9ca3af;
-            font-size: 0.9rem;
-        }
-
-        /* Mobile Menu Styles */
-        .mobile-nav {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: var(--white);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 99;
-        }
-
-        .mobile-nav.active {
-            display: flex;
-        }
-
-        .mobile-nav a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
+            font-size: 1.25rem;
             transition: color 0.3s;
         }
 
-        .mobile-nav a:hover {
-            color: var(--primary);
+        .social-links a:hover {
+            color: var(--white);
         }
 
-        .mobile-auth-buttons {
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: var(--white);
+            z-index: 999;
+            transition: right 0.3s ease;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 2rem;
         }
 
-        /* Responsive Styles */
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-menu {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .mobile-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-links a {
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         @media (max-width: 992px) {
             .hero-content {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 text-align: center;
             }
 
-            .hero-text h1 {
-                font-size: 2.5rem;
+            .hero-text p {
+                margin: 0 auto 2.5rem;
             }
 
             .hero-buttons {
                 justify-content: center;
+            }
+
+            .pricing-card.popular {
+                transform: scale(1);
             }
         }
 
@@ -455,183 +539,221 @@
                 display: none;
             }
 
-            .mobile-menu {
+            .mobile-menu-btn {
                 display: block;
             }
 
             .hero-text h1 {
-                font-size: 2rem;
-            }
-
-            .section-title h2 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .hero-text h1 {
-                font-size: 1.8rem;
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
         <div class="container">
             <nav>
-                <div class="logo">
+                <a href="#" class="logo">
                     <i class="fas fa-graduation-cap"></i>
                     FISC-Manage
-                </div>
+                </a>
                 <div class="nav-links">
-                    <a href="#">Home</a>
-                    <a href="#">Features</a>
-                    <a href="#">Pricing</a>
-                    <a href="#">For Schools</a>
-                    <a href="#">Resources</a>
+                    <a href="#home">Home</a>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#testimonials">Testimonials</a>
                 </div>
                 <div class="auth-buttons">
                     <a href="login.php" class="btn btn-outline">Log In</a>
-                    <a href="#" class="btn btn-primary">View Demo</a>
+                    <a href="#" class="btn btn-primary">Get Started</a>
                 </div>
-                <div class="mobile-menu" id="mobileMenuToggle">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </div>
+                <button class="mobile-menu-btn" id="menuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </nav>
-            
-            <!-- Mobile Navigation -->
-            <div class="mobile-nav" id="mobileNav">
-                <a href="#">Home</a>
-                <a href="#">Features</a>
-                <a href="#">Pricing</a>
-                <a href="#">For Schools</a>
-                <a href="#">Resources</a>
-                <div class="mobile-auth-buttons">
-                    <a href="login.php" class="btn btn-outline">Log In</a>
-                    <a href="#" class="btn btn-primary">View Demo</a>
-                </div>
-            </div>
         </div>
     </header>
 
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <a href="#" class="logo">FISC-Manage</a>
+            <i class="fas fa-times close-menu" id="closeBtn"></i>
+        </div>
+        <div class="mobile-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#testimonials">Testimonials</a>
+            <hr>
+            <a href="login.php">Log In</a>
+            <a href="#" style="color: var(--primary);">Get Started</a>
+        </div>
+    </div>
+
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="home">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-text">
-                    <h1>Streamline Your School Management with EduManage</h1>
-                    <p>An all-in-one platform to manage students, teachers, classes, grades, and communications efficiently. Save time and enhance the educational experience.</p>
+                <div class="hero-text fade-in">
+                    <h1>Modern School Management Simplified</h1>
+                    <p>Streamline operations, enhance learning, and connect your entire school community with one powerful, easy-to-use platform.</p>
                     <div class="hero-buttons">
-                        <a href="login.php" class="btn btn-primary">Get Started</a>
-                        <a href="#" class="btn btn-accent">Schedule a Demo</a>
+                        <a href="login.php" class="btn btn-primary">Start Free Trial</a>
+                        <a href="#features" class="btn btn-outline">Learn More</a>
                     </div>
                 </div>
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="School Management System Dashboard">
+                <div class="hero-image fade-in">
+                    <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dashboard Preview">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="categories">
+    <!-- Features Section -->
+    <section class="features" id="features">
         <div class="container">
-            <div class="section-title">
-                <h2>Everything You Need in One Platform</h2>
-                <p>Our comprehensive School Management System provides all the tools administrators, teachers, students, and parents need.</p>
+            <div class="section-header fade-in">
+                <h2>Everything You Need</h2>
+                <p>Comprehensive tools designed to make school administration effortless and efficient.</p>
             </div>
-            <div class="category-grid">
-                <div class="category-card">
-                    <div class="category-icon">
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
                         <i class="fas fa-user-graduate"></i>
                     </div>
-                    <h3>Student Management</h3>
-                    <p>Track student information, attendance, academic progress, and behavior records in one centralized system.</p>
+                    <h3>Student Information</h3>
+                    <p>Centralized database for student records, attendance tracking, and academic history.</p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
                         <i class="fas fa-chalkboard-teacher"></i>
                     </div>
                     <h3>Teacher Portal</h3>
-                    <p>Simplify lesson planning, grade management, and communication with students and parents.</p>
+                    <p>Tools for lesson planning, grading, and seamless communication with students.</p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-book"></i>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <h3>Academic Planning</h3>
-                    <p>Create class schedules, manage courses, track curriculum progress, and organize extracurricular activities.</p>
+                    <h3>Smart Scheduling</h3>
+                    <p>Automated timetable generation and event management for the entire academic year.</p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-chart-line"></i>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
                     </div>
-                    <h3>Grade & Report Cards</h3>
-                    <p>Automate grade calculations, generate report cards, and provide detailed performance analytics.</p>
+                    <h3>Fee Management</h3>
+                    <p>Track payments, generate invoices, and manage financial records securely.</p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3>Analytics & Reports</h3>
+                    <p>Insightful dashboards and customizable reports to track school performance.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <h3>Parent Communication</h3>
-                    <p>Keep parents informed with real-time updates on attendance, grades, events, and school announcements.</p>
+                    <h3>Communication</h3>
+                    <p>Integrated messaging system for staff, parents, and students to stay connected.</p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <h3>Administrative Tools</h3>
-                    <p>Streamline admissions, fee management, staff records, and other administrative processes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Plans Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Simple, Transparent Pricing</h2>
+                <p>Choose the plan that best fits your institution's needs. No hidden fees.</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Basic Plan -->
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Basic</h3>
+                    <div class="plan-price">$29<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Up to 200 Students</li>
+                        <li><i class="fas fa-check"></i> Basic Reporting</li>
+                        <li><i class="fas fa-check"></i> Attendance Tracking</li>
+                        <li><i class="fas fa-check"></i> Email Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choose Basic</a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pricing-card popular fade-in">
+                    <div class="popular-badge">Most Popular</div>
+                    <h3 class="plan-name">Professional</h3>
+                    <div class="plan-price">$79<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Up to 1000 Students</li>
+                        <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                        <li><i class="fas fa-check"></i> Parent Portal</li>
+                        <li><i class="fas fa-check"></i> Fee Management</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Choose Pro</a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Enterprise</h3>
+                    <div class="plan-price">$199<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Unlimited Students</li>
+                        <li><i class="fas fa-check"></i> Custom Features</li>
+                        <li><i class="fas fa-check"></i> API Access</li>
+                        <li><i class="fas fa-check"></i> Dedicated Account Manager</li>
+                        <li><i class="fas fa-check"></i> 24/7 Phone Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Contact Sales</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section class="testimonials">
+    <section class="testimonials" id="testimonials">
         <div class="container">
-            <div class="section-title">
-                <h2>What Schools Say About FISC-Manage</h2>
-                <p>Thousands of educational institutions trust our platform for their management needs.</p>
+            <div class="section-header fade-in">
+                <h2>Trusted by Educators</h2>
+                <p>Hear what school administrators and teachers have to say about FISC-Manage.</p>
             </div>
             <div class="testimonial-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">FISC-Manage has transformed how our school operates. We've reduced administrative workload by 40% and improved communication with parents significantly.</p>
+                <div class="testimonial-card fade-in">
+                    <p class="testimonial-text">"The interface is incredibly intuitive. We were able to train our entire staff in just one afternoon. It's been a game-changer for our administration."</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">DR</div>
-                        <div class="author-info">
-                            <h4>Dr. Robert Chen</h4>
-                            <p>Principal, Lincoln High School</p>
+                        <div class="author-avatar">RC</div>
+                        <div>
+                            <h4>Robert Chen</h4>
+                            <small>Principal, Lincoln High</small>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">As a teacher, I appreciate how intuitive the gradebook and lesson planning features are. It saves me hours each week that I can now dedicate to my students.</p>
+                <div class="testimonial-card fade-in">
+                    <p class="testimonial-text">"Finally, a system that handles grading and attendance without the headache. The parent portal has also significantly improved our community engagement."</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">SM</div>
-                        <div class="author-info">
+                        <div>
                             <h4>Sarah Mitchell</h4>
-                            <p>Math Teacher, Westwood Middle School</p>
+                            <small>Teacher, Westwood Middle</small>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">The parent portal keeps me connected to my child's education. I receive immediate notifications about grades and attendance, which helps me support my son better.</p>
+                <div class="testimonial-card fade-in">
+                    <p class="testimonial-text">"The support team is fantastic. Any time we've had a question, they've been there to help immediately. Highly recommended for any growing school."</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">MJ</div>
-                        <div class="author-info">
-                            <h4>Maria Johnson</h4>
-                            <p>Parent, Oakwood Elementary</p>
+                        <div class="author-avatar">JD</div>
+                        <div>
+                            <h4>James Davis</h4>
+                            <small>IT Director, Oak District</small>
                         </div>
                     </div>
                 </div>
@@ -642,45 +764,41 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
+            <div class="footer-grid">
+                <div class="footer-col">
                     <h3>FISC-Manage</h3>
-                    <p>The complete School Management System for modern educational institutions. Streamline operations and enhance learning experiences.</p>
+                    <p>Empowering education through technology. We build tools that help schools focus on what matters most - teaching and learning.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-                <div class="footer-column">
+                <div class="footer-col">
                     <h3>Product</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">For Elementary Schools</a></li>
-                        <li><a href="#">For High Schools</a></li>
-                        <li><a href="#">For Districts</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Updates</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Resources</h3>
+                <div class="footer-col">
+                    <h3>Support</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Case Studies</a></li>
                         <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Webinars</a></li>
-                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Status</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Company</h3>
+                <div class="footer-col">
+                    <h3>Legal</h3>
                     <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Partners</a></li>
                         <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -691,49 +809,43 @@
     </footer>
 
     <script>
-        // Mobile menu toggle functionality
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
         const mobileNav = document.getElementById('mobileNav');
-        const menuIcon = document.getElementById('menuIcon');
-        
-        mobileMenuToggle.addEventListener('click', function() {
-            // Toggle mobile navigation
+        const mobileLinks = document.querySelectorAll('.mobile-links a');
+
+        function toggleMenu() {
             mobileNav.classList.toggle('active');
-            
-            // Toggle menu icon between bars and X
-            if (mobileNav.classList.contains('active')) {
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-times');
-                mobileMenuToggle.style.transform = 'rotate(90deg)';
-            } else {
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                mobileMenuToggle.style.transform = 'rotate(0deg)';
-            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+
+        // Close menu when clicking a link
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+            });
         });
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const isClickInsideNav = mobileNav.contains(event.target);
-            const isClickOnToggle = mobileMenuToggle.contains(event.target);
-            
-            if (!isClickInsideNav && !isClickOnToggle && mobileNav.classList.contains('active')) {
-                mobileNav.classList.remove('active');
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                mobileMenuToggle.style.transform = 'rotate(0deg)';
-            }
-        });
+        // Scroll Animations
+        const observerOptions = {
+            threshold: 0.1
+        };
 
-        // Close mobile menu when window is resized to desktop size
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                mobileNav.classList.remove('active');
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                mobileMenuToggle.style.transform = 'rotate(0deg)';
-            }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
         });
     </script>
 </body>
+
 </html>

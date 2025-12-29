@@ -329,38 +329,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Valid price is required.';
         }
 
-        // Optional image upload
-        $imagePath = null;
-        if (empty($error) && isset($_FILES['item_image']) && $_FILES['item_image']['error'] === UPLOAD_ERR_OK) {
-            $allowedTypes = ['image/jpeg' => '.jpg', 'image/png' => '.png', 'image/gif' => '.gif', 'image/webp' => '.webp'];
-
-            $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'store';
-            if (!is_dir($uploadDir)) {
-                if (!mkdir($uploadDir, 0775, true)) {
-                    $error = 'Failed to create upload directory for store images.';
-                }
-            }
-
-            if (empty($error)) {
-                $finfo = new finfo(FILEINFO_MIME_TYPE);
-                $fileType = $finfo->file($_FILES['item_image']['tmp_name']);
-
-                if (isset($allowedTypes[$fileType])) {
-                    $ext = $allowedTypes[$fileType];
-                    $fileName = 'store_' . uniqid() . $ext;
-                    $dest = $uploadDir . DIRECTORY_SEPARATOR . $fileName;
-
-                    if (move_uploaded_file($_FILES['item_image']['tmp_name'], $dest)) {
-                        $imagePath = 'uploads/store/' . $fileName;
-                    } else {
-                        $error = 'Failed to save uploaded image. Error: ' . (error_get_last()['message'] ?? 'Unknown error');
-                    }
-                } else {
-                    $error = 'Invalid image type. Allowed: JPG, PNG, GIF, WEBP';
-                }
-            }
-        }
-
         if (empty($error)) {
             try {
                 // First verify the item exists
@@ -369,13 +337,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (!$checkStmt->fetch()) {
                     $error = 'Store item not found.';
                 } else {
-                    if ($imagePath) {
-                        $stmt = $pdo->prepare("UPDATE store_items SET name = ?, description = ?, category = ?, price = ?, quantity_available = ?, is_available = ?, image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                        $stmt->execute([$name, $description, $category, $price, $quantity, $is_available, $imagePath, $item_id]);
-                    } else {
-                        $stmt = $pdo->prepare("UPDATE store_items SET name = ?, description = ?, category = ?, price = ?, quantity_available = ?, is_available = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                        $stmt->execute([$name, $description, $category, $price, $quantity, $is_available, $item_id]);
-                    }
+                    $stmt = $pdo->prepare("UPDATE store_items SET name = ?, description = ?, category = ?, price = ?, quantity_available = ?, is_available = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                    $stmt->execute([$name, $description, $category, $price, $quantity, $is_available, $item_id]);
                     $success = "Store item updated successfully!";
                 }
             } catch (PDOException $e) {
@@ -441,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get store data
 try {
-    $store_items = $pdo->query("SELECT si.*, a.name AS created_by_name FROM store_items si LEFT JOIN admin a ON si.created_by = a.id ORDER BY si.created_at DESC")->fetchAll();
+    $store_items = $pdo->query("SELECT * FROM store_items ORDER BY created_at DESC")->fetchAll();
 } catch (PDOException $e) {
     $store_items = [];
     $error = "Error loading store items: " . $e->getMessage();
@@ -923,7 +886,7 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
             border-radius: 0.5rem;
             transition: border-color 0.2s;
         }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
+        .form-control:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
 
         /* Mobile */
         @media (max-width: 768px) {
@@ -1220,37 +1183,13 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                             <tr>
                                 <th>Student</th>
                                 <th>Type</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($fee_payments as $payment): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($payment['student_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($payment['fee_type_name'] ?? 'General'); ?></td>
-                                    <td>GHC<?php echo number_format($payment['amount'], 2); ?></td>
-                                    <td><?php echo date('M j, Y', strtotime($payment['payment_date'])); ?></td>
-                                    <td>
-                                        <a href="download_receipt.php?payment_id=<?php echo $payment['id']; ?>" class="btn btn-primary btn-sm" target="_blank">
-                                            <i class="fas fa-download"></i> Download Receipt
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
             <!-- Store View -->
             <div id="store-view" class="view-section">
                 <div class="table-container">
                     <div class="table-header">
                         <h2>Store Management</h2>
-                        <div style="display: flex; gap: 0.5rem; align-items:center;">
-                            <input type="text" id="search-store" placeholder="Search items..." class="form-control" style="width:220px;" onkeyup="filterTable('search-store', 'store-items-table')">
+                        <div style="display: flex; gap: 0.5rem;">
                             <button class="btn btn-primary btn-sm" onclick="openModal('addStoreItemModal')">Add Item</button>
                             <button class="btn btn-danger btn-sm" onclick="openModal('clearOrdersModal')">Clear Orders</button>
                         </div>
@@ -1258,7 +1197,7 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                     
                     <div style="padding: 1.5rem;">
                         <h3>Items</h3>
-                        <table class="data-table" id="store-items-table" style="margin-bottom: 2rem;">
+                        <table class="data-table" style="margin-bottom: 2rem;">
                             <thead>
                                 <tr>
                                     <th>Item</th>
@@ -1272,34 +1211,7 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                             <tbody>
                                 <?php foreach ($store_items as $item): ?>
                                     <tr>
-                                        <td>
-                                            <div style="display:flex; align-items:center; gap:0.75rem;">
-                                                <?php if (!empty($item['image_url'])): ?>
-                                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #eee;">
-                                                <?php else: ?>
-                                                    <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px dashed #ccc;border-radius:4px;color:#999;">
-                                                        <i class="fas fa-image"></i>
-                                                    </div>
-                                                <?php endif; ?>
-                                                <div>
-                                                    <div><strong><?php echo htmlspecialchars($item['name']); ?></strong></div>
-                                                    <?php if (!empty($item['description'])): ?>
-                                                    <div style="font-size:0.85rem;color:#6b7280;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<?php echo htmlspecialchars($item['description']); ?>">
-                                                        <?php echo htmlspecialchars($item['description']); ?>
-                                                    </div>
-                                                    <?php endif; ?>
-                                                    <div style="font-size:0.8rem;color:#9ca3af;">
-                                                        <?php if (!empty($item['created_by_name'])): ?>
-                                                            By <?php echo htmlspecialchars($item['created_by_name']); ?>
-                                                        <?php endif; ?>
-                                                        • Created <?php echo date('M j, Y', strtotime($item['created_at'])); ?>
-                                                        <?php if (!empty($item['updated_at'])): ?>
-                                                            • Updated <?php echo date('M j, Y', strtotime($item['updated_at'])); ?>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td><?php echo htmlspecialchars($item['name']); ?></td>
                                         <td><?php echo ucfirst($item['category']); ?></td>
                                         <td>₦<?php echo number_format($item['price'], 2); ?></td>
                                         <td><?php echo $item['quantity_available']; ?></td>
@@ -1506,7 +1418,6 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                 <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="add_store_item" value="1">
                     <div class="form-group"><label>Name</label><input type="text" name="name" class="form-control" required></div>
-                    <div class="form-group"><label>Description</label><textarea name="description" class="form-control" rows="3" placeholder="Optional details"></textarea></div>
                     <div class="form-group"><label>Category</label>
                         <select name="category" class="form-control" required>
                             <option value="book">Book</option>
@@ -1517,8 +1428,6 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                     </div>
                     <div class="form-group"><label>Price</label><input type="number" name="price" class="form-control" required></div>
                     <div class="form-group"><label>Quantity</label><input type="number" name="quantity" class="form-control" required></div>
-                    <div class="form-group"><label>Image</label><input type="file" name="item_image" class="form-control" accept="image/*"></div>
-                    <div class="form-group"><label><input type="checkbox" name="is_available" value="1" checked> Available</label></div>
                     <button type="submit" class="btn btn-primary">Add Item</button>
                 </form>
             </div>
@@ -1628,11 +1537,10 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                 <button onclick="closeModal('editStoreItemModal')" style="background:none;border:none;cursor:pointer;"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST">
                     <input type="hidden" name="update_store_item" value="1">
                     <input type="hidden" name="item_id" id="edit_item_id">
                     <div class="form-group"><label>Name</label><input type="text" name="name" id="edit_item_name" class="form-control" required></div>
-                    <div class="form-group"><label>Description</label><textarea name="description" id="edit_item_description" class="form-control" rows="3"></textarea></div>
                     <div class="form-group"><label>Category</label>
                         <select name="category" id="edit_item_category" class="form-control" required>
                             <option value="book">Book</option>
@@ -1645,13 +1553,6 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                     <div class="form-group"><label>Quantity</label><input type="number" name="quantity" id="edit_item_quantity" class="form-control" required></div>
                     <div class="form-group">
                         <label><input type="checkbox" name="is_available" id="edit_item_available" value="1"> Available</label>
-                    </div>
-                    <div class="form-group">
-                        <label>Image</label>
-                        <div style="display:flex; align-items:center; gap:0.75rem;">
-                            <img id="edit_item_image_preview" src="" alt="Item image" style="width:60px;height:60px;object-fit:cover;border:1px solid #eee;border-radius:4px;display:none;">
-                            <input type="file" name="item_image" class="form-control" accept="image/*">
-                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Update Item</button>
                 </form>
@@ -1810,18 +1711,10 @@ $capacity_percentage = $total_capacity > 0 ? round(($student_count / $total_capa
                     const item = data.item;
                     document.getElementById('edit_item_id').value = item.id;
                     document.getElementById('edit_item_name').value = item.name;
-                    document.getElementById('edit_item_description').value = item.description || '';
                     document.getElementById('edit_item_category').value = item.category;
                     document.getElementById('edit_item_price').value = item.price;
                     document.getElementById('edit_item_quantity').value = item.quantity_available;
                     document.getElementById('edit_item_available').checked = item.is_available == 1;
-                    const imgEl = document.getElementById('edit_item_image_preview');
-                    if (item.image_url) {
-                        imgEl.src = item.image_url;
-                        imgEl.style.display = 'block';
-                    } else {
-                        imgEl.style.display = 'none';
-                    }
                     openModal('editStoreItemModal');
                 }
             } catch (error) {
